@@ -1,5 +1,7 @@
 from tkinter import *
 from random import *
+from tkinter import messagebox
+import pyperclip
 
 #password-generator
 letters = [
@@ -28,19 +30,30 @@ def generatepass():
     for char in password_list:
         password += char
     password_entry.insert(0, password)
+    pyperclip.copy(password)
 
 #save-password
 def save():
     web = website_entry.get()
     mail = mail_entry.get()
     pw = password_entry.get()
-    with open("data.txt", mode="a") as data:
-        data.writelines(f"{web} | {mail} | {pw}")
-    website_entry.delete(0, 'end')
-    mail_entry.delete(0, 'end')
-    password_entry.delete(0, 'end')
+
+    if len(web) == 0 or len(mail) == 0 or len(pw) == 0:
+        messagebox.showerror(title="Error",message="Fields are empty. "
+                                                   "\nPlease fill all the details before saving.")
+    else:
+        isok = messagebox.askokcancel(title=web,message=f"These are the details entered \nEmail:{mail} \nPassword:{pw} "                                               f"\nDo you want to continue?")
+        if isok:
+            with open("data.txt", mode="a") as data:
+                data.writelines(f"{web} | {mail} | {pw}")
+            website_entry.delete(0, 'end')
+            mail_entry.delete(0, 'end')
+            password_entry.delete(0, 'end')
+
+
 
 #gui
+
 ### Window
 window = Tk()
 window.title("Password Manager")
